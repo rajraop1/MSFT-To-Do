@@ -8,19 +8,25 @@ General Steps to Export/Import
 6. Go to Access Token and copy it
 
 
+Add Powershell to path
+<code>export PATH=$PATH:/usr/local/Cellar/powershell-lts/7.2.9/libexec</code>
+
+
 Export
 1. Run the above general steps
 2. In Powershell run the command ./my-to-do.ps1 backup
-3. Paste the OAuth access token from the general section
-4. A file named microsoft_todo_backup.xml will be created
+   <code>pwsh my-to-do.ps1 backup</code>
+4. Paste the OAuth access token from the general section
+5. A file named microsoft_todo_backup.xml will be created
 
 Import
 
 1. Run the above general steps for target account
 2. In Powershell run the command ./my-to-do.ps1 restore
-3. Paste the OAuth access token from the general section
-4. Tasks from the file named microsoft_todo_backup.xml will be imported into target account
-5. Login and check the target account
+<code>pwsh my-to-do.ps1 restore</code>
+4. Paste the OAuth access token from the general section
+5. Tasks from the file named microsoft_todo_backup.xml will be imported into target account
+6. Login and check the target account
 
 
 References:
