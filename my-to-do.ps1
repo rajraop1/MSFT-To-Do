@@ -71,6 +71,11 @@ Function Export-MicrosoftTodo {
         "lists" = $lists
         "tasks" = $tasks
     } | Export-Clixml -Path $exportFilename -Verbose
+
+    $myDate = Get-Date -Format "yyyyMMdd"
+
+    Copy-Item -Path $exportFilename -Destination "$exportFilename+$myDate"
+
 }
 
 
