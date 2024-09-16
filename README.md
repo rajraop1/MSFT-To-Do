@@ -29,6 +29,15 @@ Import
 6. Login and check the target account
 
 
+Using Docker Image:
+cd TODO
+docker run -it -v .:/data mcr.microsoft.com/powershell 
+cd /data
+./my-to-do.ps1 backup
+>>>PASTE the Oauth token
+exit
+
+
 References:
 Rest APIs
 https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0
