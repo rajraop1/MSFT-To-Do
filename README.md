@@ -1,9 +1,9 @@
 General Steps to Export/Import
 
 1. Login to Microsoft Graph https://developer.microsoft.com/en-us/graph/graph-explorer
-2. Click on Resources and then search for Tasks
+2. Click on Resources and then search for Tasks. Now it's in "Simple Queries" -> "Microsoft To do"
 3. Execute the Tasks Get
-4. If you get Internal Error, go to Modify Permissions, and Consent to Tasks read & Write
+4. If you get Internal Error, go to Modify Permissions in the same frame as the query, just before Access Token, and Consent to Tasks read & Write
 5. Run the Tasks Get again and ensure it works
 6. Go to Access Token and copy it
 
