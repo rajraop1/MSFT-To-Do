@@ -2,6 +2,7 @@ function logRequest(url, statusCode, responseText) {
   var logSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
   if (!logSheet) {
     logSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("Log");
+    logSheet.appendRow(["URL", "Status", "Response"]);
   }
   logSheet.appendRow([url, statusCode, responseText]);
 }
@@ -22,43 +23,45 @@ function getTodoData(token) {
   
   var lists = JSON.parse(response.getContentText()).value;
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ToDo");
+  sheet.clear();
+  sheet.appendRow(["List", "Task", "Steps"]);
+  
+  var logSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
+  if (logSheet) logSheet.clear();
+  
+  var data = [];
   
   for (var i = 0; i < lists.length; i++) {
     var listName = lists[i].displayName || "Unnamed List";
     var listId = lists[i].id;
-    sheet.appendRow([listName, "", ""]); // List level
+    data.push([listName, "", ""]);
     
-    var tasksUrl = "https://graph.microsoft.com/v1.0/me/todo/lists/" + listId + "/tasks";
-    response = UrlFetchApp.fetch(tasksUrl, options);
-    logRequest(tasksUrl, response.getResponseCode(), response.getContentText());
+    var tasksUrl = "https://graph.microsoft.com/v1.0/me/todo/lists/" + listId + "/tasks?$expand=checklistItems";
+    var taskResponse = UrlFetchApp.fetch(tasksUrl, options);
+    logRequest(tasksUrl, taskResponse.getResponseCode(), taskResponse.getContentText());
     
-    if (response.getResponseCode() !== 200) continue;
+    if (taskResponse.getResponseCode() !== 200) continue;
     
-    var tasks = JSON.parse(response.getContentText()).value;
+    var tasks = JSON.parse(taskResponse.getContentText()).value;
     
     for (var j = 0; j < tasks.length; j++) {
       var taskName = tasks[j].title || "Unnamed Task";
-      var taskId = tasks[j].id;
-      sheet.appendRow(["", taskName, ""]); // Task level
+      data.push(["", taskName, ""]);
       
       if (tasks[j].checklistItems) {
         for (var k = 0; k < tasks[j].checklistItems.length; k++) {
           var stepName = tasks[j].checklistItems[k].displayName || "Unnamed Step";
-          sheet.appendRow(["", "", stepName]);
+          data.push(["", "", stepName]);
         }
       }
     }
   }
+  
+  sheet.getRange(2, 1, data.length, 3).setValues(data);
 }
 
 function importToGoogleSheet() {
   var token = Browser.inputBox("Enter Microsoft To Do API Token");
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
-  sheet.clear()
-  sheet.appendRow(["URL", "Status", "Response"]);
-  sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ToDo");
-  sheet.clear()
-  sheet.appendRow(["List", "Task", "Steps"]);
   getTodoData(token);
 }
 
