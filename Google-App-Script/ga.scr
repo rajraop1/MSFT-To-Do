@@ -41,15 +41,10 @@ function getTodoData(token) {
       var taskId = tasks[j].id;
       sheet.appendRow(["", taskName, ""]); // Task level
       
-      var checklistUrl = "https://graph.microsoft.com/v1.0/me/todo/lists/" + listId + "/tasks/" + taskId + "/checklistItems";
-      response = UrlFetchApp.fetch(checklistUrl, options);
-      logRequest(checklistUrl, response.getResponseCode(), response.getContentText());
-      
-      if (response.getResponseCode() === 200) {
-        var checklistItems = JSON.parse(response.getContentText()).value;
-        for (var k = 0; k < checklistItems.length; k++) {
-          var stepName = checklistItems[k].displayName || "Unnamed Step";
-          sheet.appendRow(["", "", stepName]); // Step as separate row
+      if (tasks[j].checklistItems) {
+        for (var k = 0; k < tasks[j].checklistItems.length; k++) {
+          var stepName = tasks[j].checklistItems[k].displayName || "Unnamed Step";
+          sheet.appendRow(["", "", stepName]);
         }
       }
     }

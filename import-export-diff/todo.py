@@ -48,6 +48,7 @@ def get_todo_data(token_file):
         for task_index, task in enumerate(tasks, start=1):
             task_name = task.get('title', 'Unnamed Task')
             steps_text = ""
+            data.append(("", task_name, ""))  # task level
             task_id = task.get('id', '')
             
             if task_id:
@@ -55,18 +56,15 @@ def get_todo_data(token_file):
                 checklist_response = requests.get(checklist_url, headers=headers)
                 log_request(checklist_url, checklist_response.status_code, checklist_response.text)
                 
+
                 if checklist_response.status_code == 200:
                     checklist_items = checklist_response.json().get("value", [])
-                    if checklist_items:
-                        steps_text = ", ".join([step.get('displayName', 'Unnamed Step') for step in checklist_items if 'displayName' in step])
-                    else:
-                        #steps_text = "No steps available"
-                        steps_text = ""
+                    for step in checklist_items:
+                        step_name = step.get('displayName', 'Unnamed Step')
+                        data.append(("", "", step_name))  # Step as separate row
                 else:
-                    steps_text = f"Error fetching steps: {checklist_response.status_code} {checklist_response.text}"
-            
-            data.append(("", task_name, steps_text))  # Task with checklist items in column 3
-            
+                    data.append(("", "", f"Error fetching steps: {checklist_response.status_code} {checklist_response.text}"))
+           
             # Print progress update dynamically
             sys.stdout.write(f"\rProcessing list {index}/{total_lists}, task {task_index}/{total_tasks} completed  ")
             sys.stdout.flush()
